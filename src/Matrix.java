@@ -3,31 +3,99 @@ import java.util.Random;
 public class Matrix {
     private final int m;
     private final int n;
+    private final int mod;
     private final int[][] matrix;
 
-    Matrix(int _n, int _m, int max) {
+    Matrix(int _n, int _m, int _mod) {
         n = _n;
         m = _m;
-        matrix = new int[n][m];
+        mod = _mod;
+        matrix = new int[m][n];
         Random rng = new Random();
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                matrix[i][j] = rng.nextInt(0,max);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                matrix[i][j] = rng.nextInt(0,mod);
             }
         }
     }
 
-    Matrix(int _n, int _m, int[][] values) {
+    Matrix(int _n, int _m,int _mod, int[][] values) {
         n = _n;
         m = _m;
+        mod = _mod;
         matrix = values;
+    }
+
+    private int getValAt(int _m,int _n){
+        if (_m >= this.m || _n >= this.n){
+            return 0;
+        }
+        else {
+            return this.matrix[_m][_n];
+        }
+    }
+
+    public static Matrix multiply(Matrix a, Matrix b) {
+        if(a.mod != b.mod)
+            throw new RuntimeException();
+        int n,m,r;
+        m = a.m;
+        n = b.n;
+        if(a.n != b.m) {
+            r = Math.min(a.n,b.m);
+        } else {
+            r = a.n;
+        }
+
+        int[][] _matrix = new int[Math.max(a.m, b.m)][Math.max(a.n, b.n)];
+
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j){
+                int c = 0;
+                for (int k = 0; k < r; ++k){
+                    c += a.getValAt(i,k) * b.getValAt(k,j);
+                }
+                _matrix[i][j] = Math.floorMod(c,a.mod);
+            }
+
+        return new Matrix(n,m,a.mod,_matrix);
+    }
+
+    public static Matrix add(Matrix a, Matrix b) {
+        if(a.mod != b.mod)
+            throw new RuntimeException();
+        int n = Math.max(a.n, b.n);
+        int m = Math.max(a.m, b.m);
+
+        int[][] _matrix = new int[m][n];
+
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j)
+                _matrix[i][j] = Math.floorMod(a.getValAt(i,j) + b.getValAt(i,j),a.mod);
+
+        return new Matrix(n,m,a.mod,_matrix);
+
+    }
+    public static Matrix substract(Matrix a, Matrix b) {
+        if(a.mod != b.mod)
+            throw new RuntimeException();
+        int n = Math.max(a.n, b.n);
+        int m = Math.max(a.m, b.m);
+
+        int[][] _matrix = new int[m][n];
+
+        for (int i = 0; i < m; ++i)
+            for (int j = 0; j < n; ++j)
+                _matrix[i][j] = Math.floorMod(a.getValAt(i,j) - b.getValAt(i,j),a.mod);
+
+        return new Matrix(n,m,a.mod,_matrix);
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i = 0 ; i < n ; ++i) {
-            for (int j = 0; j < m; j++) {
-                String s = String.valueOf(matrix[i][j]) + " ";
+        for(int i = 0 ; i < m ; ++i) {
+            for (int j = 0; j < n; j++) {
+                String s = String.valueOf(getValAt(i,j)) + " ";
                 sb.append(s);
             }
             sb.append('\n');
