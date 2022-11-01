@@ -35,7 +35,7 @@ public class Matrix {
 
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if(values.length > i && values[i].length > j)
+                if(values[i].length > j)
                     _matrix[i][j] = Math.floorMod(values[i][j], _mod);
             }
         }
