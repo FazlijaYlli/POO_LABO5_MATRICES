@@ -38,7 +38,7 @@ public class Matrix {
     public static Matrix multiply(Matrix a, Matrix b) {
         if(a.mod != b.mod)
             throw new RuntimeException();
-        int n,m,r;
+        int n,m;
 
         m = Math.max(a.m,b.m);
         n = Math.max(a.n,b.n);
