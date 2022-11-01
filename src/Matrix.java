@@ -7,6 +7,8 @@ public class Matrix {
     private final int[][] matrix;
 
     Matrix(int _n, int _m, int _mod) {
+        if(_n <= 0 || _m <= 0)
+            throw new RuntimeException();
         n = _n;
         m = _m;
         mod = _mod;
@@ -19,11 +21,25 @@ public class Matrix {
         }
     }
 
-    Matrix(int _n, int _m,int _mod, int[][] values) {
-        n = _n;
-        m = _m;
+    Matrix(int _mod, int[][] values) {
         mod = _mod;
-        matrix = values;
+
+        int maxSize = 0;
+        for (int[] line: values) {
+            maxSize = Math.max(maxSize, line.length);
+        }
+
+        m = values.length;
+        n = maxSize;
+        int[][] _matrix = new int[m][n];
+
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if(values.length > i && values[i].length > j)
+                    _matrix[i][j] = Math.floorMod(values[i][j], _mod);
+            }
+        }
+        matrix = _matrix;
     }
 
     private int getValAt(int _m,int _n){
@@ -51,7 +67,7 @@ public class Matrix {
             }
         }
 
-        return new Matrix(n,m,a.mod,_matrix);
+        return new Matrix(a.mod,_matrix);
     }
 
     public static Matrix add(Matrix a, Matrix b) {
@@ -66,7 +82,7 @@ public class Matrix {
             for (int j = 0; j < n; ++j)
                 _matrix[i][j] = Math.floorMod(a.getValAt(i,j) + b.getValAt(i,j),a.mod);
 
-        return new Matrix(n,m,a.mod,_matrix);
+        return new Matrix(a.mod,_matrix);
 
     }
     public static Matrix substract(Matrix a, Matrix b) {
@@ -81,7 +97,7 @@ public class Matrix {
             for (int j = 0; j < n; ++j)
                 _matrix[i][j] = Math.floorMod(a.getValAt(i,j) - b.getValAt(i,j),a.mod);
 
-        return new Matrix(n,m,a.mod,_matrix);
+        return new Matrix(a.mod,_matrix);
     }
 
     public String toString() {
