@@ -39,24 +39,17 @@ public class Matrix {
         if(a.mod != b.mod)
             throw new RuntimeException();
         int n,m,r;
-        m = a.m;
-        n = b.n;
-        if(a.n != b.m) {
-            r = Math.min(a.n,b.m);
-        } else {
-            r = a.n;
-        }
+
+        m = Math.max(a.m,b.m);
+        n = Math.max(a.n,b.n);
 
         int[][] _matrix = new int[Math.max(a.m, b.m)][Math.max(a.n, b.n)];
 
-        for (int i = 0; i < m; ++i)
-            for (int j = 0; j < n; ++j){
-                int c = 0;
-                for (int k = 0; k < r; ++k){
-                    c += a.getValAt(i,k) * b.getValAt(k,j);
-                }
-                _matrix[i][j] = Math.floorMod(c,a.mod);
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                _matrix[i][j] = Math.floorMod(a.getValAt(i,j) * b.getValAt(i,j),a.mod);
             }
+        }
 
         return new Matrix(n,m,a.mod,_matrix);
     }
